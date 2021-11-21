@@ -41,12 +41,14 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController id = TextEditingController();
-    TextEditingController participant1id = TextEditingController();
-    TextEditingController participant2id = TextEditingController();
-    TextEditingController starttime = TextEditingController();
-    TextEditingController endtime = TextEditingController();
-    TextEditingController resume = TextEditingController();
+    TextEditingController id = TextEditingController(text: "");
+    TextEditingController participant1id = TextEditingController(text: "");
+    TextEditingController participant2id = TextEditingController(text: "");
+    TextEditingController starttime =
+        TextEditingController(text: DateTime.now().toString());
+    TextEditingController endtime =
+        TextEditingController(text: DateTime.now().toString());
+    TextEditingController resume = TextEditingController(text: "");
     return Form(
       key: _formKey,
       child: Column(
@@ -103,21 +105,63 @@ class MyCustomFormState extends State<MyCustomForm> {
           GestureDetector(
             onTap: () async {
               try {
-                await DatabaseService().addMeeting(
-                    id.text,
-                    participant1id.text,
-                    participant2id.text,
-                    starttime.text,
-                    endtime.text,
-                    resume.text);
-                await DatabaseService().addoccupancy(
-                    participant1id.text, starttime.text, endtime.text);
-                await DatabaseService().addoccupancy(
-                    participant2id.text, starttime.text, endtime.text);
+                var st = DateTime.parse(starttime.text);
+                var et = DateTime.parse(endtime.text);
+                var now = DateTime.now();
+                if (id.text == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('ID is empty'),
+                  ));
+                } else if (participant1id == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 1 ID is empty'),
+                  ));
+                } else if (participant2id == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 2 ID is empty'),
+                  ));
+                } else if (starttime == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Start Time is empty'),
+                  ));
+                } else if (endtime == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('End Time is empty'),
+                  ));
+                } else if (resume == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 2 ID is empty'),
+                  ));
+                } else if (participant1id == participant2id) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Enter 2 different participants'),
+                  ));
+                } else if (st.isBefore(now)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Start Time before current time'),
+                  ));
+                } else if (st.isAfter(et)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('End Time before Start Time'),
+                  ));
+                } else {
+                  await DatabaseService().addMeeting(
+                      id.text,
+                      participant1id.text,
+                      participant2id.text,
+                      starttime.text,
+                      endtime.text,
+                      resume.text);
+                  await DatabaseService().addoccupancy(
+                      participant1id.text, starttime.text, endtime.text);
+                  await DatabaseService().addoccupancy(
+                      participant2id.text, starttime.text, endtime.text);
+
+                  Navigator.pop(context);
+                }
               } on FirebaseException catch (e) {
                 print(e);
               }
-              Navigator.pop(context);
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
