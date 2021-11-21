@@ -81,10 +81,11 @@ class MyCustomFormState extends State<MyCustomForm> {
         TextEditingController(text: widget.participant1id);
     TextEditingController participant2id =
         TextEditingController(text: widget.participant2id);
-    TextEditingController starttime =
-        TextEditingController(text: widget.starttime);
-    TextEditingController endtime = TextEditingController(text: widget.endtime);
-    TextEditingController resume = TextEditingController(text: widget.resume);
+    TextEditingController starttime = TextEditingController(
+        text: DateTime.parse(widget.starttime).toString());
+    TextEditingController endtime =
+        TextEditingController(text: DateTime.parse(widget.endtime).toString());
+    TextEditingController resume = TextEditingController(text: "");
     return Form(
       key: _formKey,
       child: Column(
@@ -142,21 +143,74 @@ class MyCustomFormState extends State<MyCustomForm> {
           GestureDetector(
             onTap: () async {
               try {
-                await DatabaseService().addMeeting(
-                    id.text,
-                    participant1id.text,
-                    participant2id.text,
-                    starttime.text,
-                    endtime.text,
-                    resume.text);
-                await DatabaseService().addoccupancy(
-                    participant1id.text, starttime.text, endtime.text);
-                await DatabaseService().addoccupancy(
-                    participant2id.text, starttime.text, endtime.text);
+                var st = DateTime.parse(starttime.text);
+                var et = DateTime.parse(endtime.text);
+                var now = DateTime.now();
+                if (id.text == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('ID is empty'),
+                  ));
+                } else if (participant1id == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 1 ID is empty'),
+                  ));
+                } else if (participant2id == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 2 ID is empty'),
+                  ));
+                } else if (starttime == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Start Time is empty'),
+                  ));
+                } else if (endtime == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('End Time is empty'),
+                  ));
+                } else if (resume == "") {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Participant 2 ID is empty'),
+                  ));
+                } else if (participant1id == participant2id) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Enter 2 different participants'),
+                  ));
+                } else if (st.isBefore(now)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Start Time before current time'),
+                  ));
+                } else if (st.isAfter(et)) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('End Time before Start Time'),
+                  ));
+                } else if (await DatabaseService().searchoccupancy(
+                            participant1id.text,
+                            starttime.text,
+                            endtime.text) ==
+                        true ||
+                    await DatabaseService().searchoccupancy(participant2id.text,
+                            starttime.text, endtime.text) ==
+                        true) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Time Overlap of Participants'),
+                  ));
+                } else {
+                  await DatabaseService().addMeeting(
+                      id.text,
+                      participant1id.text,
+                      participant2id.text,
+                      starttime.text,
+                      endtime.text,
+                      resume.text);
+                  await DatabaseService().addoccupancy(
+                      participant1id.text, starttime.text, endtime.text);
+                  await DatabaseService().addoccupancy(
+                      participant2id.text, starttime.text, endtime.text);
+
+                  Navigator.pop(context);
+                }
               } on FirebaseException catch (e) {
                 print(e);
               }
-              Navigator.pop(context);
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),

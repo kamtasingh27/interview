@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:interview/models/participant.dart';
 import '../database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class addmeeting extends StatefulWidget {
   const addmeeting({Key? key}) : super(key: key);
@@ -144,6 +147,17 @@ class MyCustomFormState extends State<MyCustomForm> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('End Time before Start Time'),
                   ));
+                } else if (await DatabaseService().searchoccupancy(
+                            participant1id.text,
+                            starttime.text,
+                            endtime.text) ==
+                        true ||
+                    await DatabaseService().searchoccupancy(participant2id.text,
+                            starttime.text, endtime.text) ==
+                        true) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Time Overlap of Participants'),
+                  ));
                 } else {
                   await DatabaseService().addMeeting(
                       id.text,
@@ -156,7 +170,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                       participant1id.text, starttime.text, endtime.text);
                   await DatabaseService().addoccupancy(
                       participant2id.text, starttime.text, endtime.text);
-
+                  await sendMail(participant1id.text);
+                  await sendMail(participant2id.text);
                   Navigator.pop(context);
                 }
               } on FirebaseException catch (e) {
@@ -204,4 +219,19 @@ class MyCustomFormState extends State<MyCustomForm> {
       ),
     );
   }
+}
+
+Future<void> sendMail(participantid) async {
+  String username = 'studywithdummy@gmail.com';
+  String password = '9540892961';
+  String email = await DatabaseService().getmail(participantid);
+
+  final smtpServer = gmail(username, password);
+  final equivalentMessage = Message()
+    ..from = Address(username, 'Interview')
+    ..recipients.add(Address(email))
+    ..subject = 'Interview Scheduled'
+    ..text = 'Your Interview is Scheduled.';
+
+  await send(equivalentMessage, smtpServer);
 }

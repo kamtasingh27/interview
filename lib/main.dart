@@ -128,14 +128,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Montserrat'),
                             ),
-                            Text(
-                              'End Time - ' + meetings[index].endtime,
-                              style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Montserrat'),
-                            ),
                             TextButton(
                                 onPressed: () {
                                   launch(meetings[index].resume);

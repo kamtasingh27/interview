@@ -47,6 +47,47 @@ class DatabaseService {
         .catchError((error) => print("Failed to add appointment: $error"));
   }
 
+  Future<bool> searchoccupancy(
+      String id, String starttime, String endtime) async {
+    var stt = DateTime.parse(starttime);
+    var ett = DateTime.parse(endtime);
+    int flag = 1;
+    await participants
+        .doc(id)
+        .collection('occupied')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        var st = DateTime.parse(doc["starttime"]);
+        var et = DateTime.parse(doc["endtime"]);
+        if (stt.isBefore(et) && stt.isAfter(st)) {
+          flag = 0;
+        }
+        if (ett.isAfter(st) && ett.isBefore(et)) {
+          flag = 0;
+        }
+      });
+    });
+    print(flag);
+    if (flag == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<String> getmail(String participantid) async {
+    String email = "";
+    await participants
+        .doc(participantid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        email = documentSnapshot.data()["email"];
+      }
+    });
+    return email;
+  }
+
   Stream<List<meeting>> get appoints {
     return meetings.snapshots().map(appointmentListFromSnapshot);
   }

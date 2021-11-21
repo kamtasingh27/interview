@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class addparticipant extends StatefulWidget {
   const addparticipant({Key? key}) : super(key: key);
@@ -107,7 +109,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Center(
-                      child: Text('Add Appointment',
+                      child: Text('Add Participant',
                           style: TextStyle(
                               fontSize: 20,
                               color: Color(0xff4C3C88),
