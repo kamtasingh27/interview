@@ -7,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'models/meeting.dart';
 import 'package:provider/provider.dart';
 import 'database.dart';
+import 'screens/editmeeting.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: <Widget>[
                             Text(
                               'Meeting ID - ' + meetings[index].id,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 20,
                                   color: Color(0xff4C3C88),
                                   fontWeight: FontWeight.bold,
@@ -95,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(
                               'Participand 1 ID - ' +
                                   meetings[index].participant1id,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15,
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold,
@@ -104,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(
                               'Participand 2 ID - ' +
                                   meetings[index].participant2id,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -112,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Text(
                               'Start Time - ' + meetings[index].starttime,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -120,12 +122,43 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Text(
                               'End Time - ' + meetings[index].endtime,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Montserrat'),
                             ),
+                            Text(
+                              'End Time - ' + meetings[index].endtime,
+                              style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Montserrat'),
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  launch(meetings[index].resume);
+                                },
+                                child: Text('Resume')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => editmeeting(
+                                            id: meetings[index].id,
+                                            participant1id:
+                                                meetings[index].participant1id,
+                                            participant2id:
+                                                meetings[index].participant2id,
+                                            starttime:
+                                                meetings[index].starttime,
+                                            endtime: meetings[index].endtime,
+                                            resume: meetings[index].resume)),
+                                  );
+                                },
+                                child: Text('Edit'))
                           ],
                         ),
                       ),

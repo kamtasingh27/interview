@@ -20,7 +20,7 @@ class DatabaseService {
   }
 
   Future addMeeting(String id, String participant1id, String participant2id,
-      String starttime, String endtime) async {
+      String starttime, String endtime, String resume) async {
     return await meetings
         .doc(id)
         .set({
@@ -28,7 +28,8 @@ class DatabaseService {
           'participant1id': participant1id,
           'participant2id': participant2id,
           'starttime': starttime,
-          'endtime': endtime
+          'endtime': endtime,
+          'resume': resume,
         })
         .then((value) => print("Meeting added successfully"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -42,7 +43,7 @@ class DatabaseService {
           'starttime': starttime,
           'endtime': endtime,
         })
-        .then((value) => print("Appointment added successfully"))
+        .then((value) => print("Occupancy added successfully"))
         .catchError((error) => print("Failed to add appointment: $error"));
   }
 
@@ -53,11 +54,13 @@ class DatabaseService {
   List<meeting> appointmentListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return meeting(
-          id: doc.data()['id'],
-          participant1id: doc.data()['participant1id'],
-          participant2id: doc.data()['participant2id'],
-          starttime: doc.data()['starttime'],
-          endtime: doc.data()['endtime']);
+        id: doc.data()['id'],
+        participant1id: doc.data()['participant1id'],
+        participant2id: doc.data()['participant2id'],
+        starttime: doc.data()['starttime'],
+        endtime: doc.data()['endtime'],
+        resume: doc.data()['resume'],
+      );
     }).toList();
   }
 }

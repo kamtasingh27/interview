@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
-import '../database.dart';
+import 'package:interview/database.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+import 'package:interview/models/participant.dart';
 
-class addmeeting extends StatefulWidget {
-  const addmeeting({Key? key}) : super(key: key);
+class editmeeting extends StatefulWidget {
+  String id;
+  String participant1id;
+  String participant2id;
+  var starttime;
+  var endtime;
+  String resume;
+  editmeeting(
+      {Key? key,
+      required this.id,
+      required this.participant1id,
+      required this.participant2id,
+      required this.starttime,
+      required this.endtime,
+      required this.resume})
+      : super(key: key);
 
   @override
-  _addmeetingState createState() => _addmeetingState();
+  _editmeetingState createState() => _editmeetingState();
 }
 
-class _addmeetingState extends State<addmeeting> {
+class _editmeetingState extends State<editmeeting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +35,34 @@ class _addmeetingState extends State<addmeeting> {
         ),
         backgroundColor: Colors.black,
       ),
-      body: MyCustomForm(),
+      body: MyCustomForm(
+        id: widget.id,
+        participant1id: widget.participant1id,
+        participant2id: widget.participant2id,
+        starttime: widget.starttime,
+        endtime: widget.endtime,
+        resume: widget.resume,
+      ),
     );
   }
 }
 
 class MyCustomForm extends StatefulWidget {
+  String id;
+  String participant1id;
+  String participant2id;
+  var starttime;
+  var endtime;
+  String resume;
+  MyCustomForm(
+      {Key? key,
+      required this.id,
+      required this.participant1id,
+      required this.participant2id,
+      required this.starttime,
+      required this.endtime,
+      required this.resume})
+      : super(key: key);
   @override
   MyCustomFormState createState() {
     return MyCustomFormState();
@@ -41,18 +76,22 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController id = TextEditingController();
-    TextEditingController participant1id = TextEditingController();
-    TextEditingController participant2id = TextEditingController();
-    TextEditingController starttime = TextEditingController();
-    TextEditingController endtime = TextEditingController();
-    TextEditingController resume = TextEditingController();
+    TextEditingController id = TextEditingController(text: widget.id);
+    TextEditingController participant1id =
+        TextEditingController(text: widget.participant1id);
+    TextEditingController participant2id =
+        TextEditingController(text: widget.participant2id);
+    TextEditingController starttime =
+        TextEditingController(text: widget.starttime);
+    TextEditingController endtime = TextEditingController(text: widget.endtime);
+    TextEditingController resume = TextEditingController(text: widget.resume);
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TextFormField(
+            readOnly: true,
             controller: id,
             decoration: const InputDecoration(
               icon: const Icon(Icons.circle_notifications_outlined),
@@ -144,7 +183,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Center(
-                      child: Text('Add Meeting',
+                      child: Text('Update Details',
                           style: TextStyle(
                               fontSize: 20,
                               color: Color(0xff4C3C88),
