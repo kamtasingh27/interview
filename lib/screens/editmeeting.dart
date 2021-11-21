@@ -150,11 +150,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('ID is empty'),
                   ));
-                } else if (participant1id == "") {
+                } else if (participant1id.text == "") {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Participant 1 ID is empty'),
                   ));
-                } else if (participant2id == "") {
+                } else if (participant2id.text == "") {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Participant 2 ID is empty'),
                   ));
@@ -166,11 +166,11 @@ class MyCustomFormState extends State<MyCustomForm> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('End Time is empty'),
                   ));
-                } else if (resume == "") {
+                } else if (resume.text == "") {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Participant 2 ID is empty'),
                   ));
-                } else if (participant1id == participant2id) {
+                } else if (participant1id.text == participant2id.text) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Enter 2 different participants'),
                   ));
