@@ -21,12 +21,16 @@ class DatabaseService {
 
   Future addMeeting(String id, String participant1id, String participant2id,
       String starttime, String endtime, String resume) async {
+    String email1 = await getmail(participant1id);
+    String email2 = await getmail(participant2id);
     return await meetings
         .doc(id)
         .set({
           'id': id,
           'participant1id': participant1id,
+          'email1': email1,
           'participant2id': participant2id,
+          'email2': email2,
           'starttime': starttime,
           'endtime': endtime,
           'resume': resume,
@@ -97,7 +101,9 @@ class DatabaseService {
       return meeting(
         id: doc.data()['id'],
         participant1id: doc.data()['participant1id'],
+        email1: doc.data()['email1'],
         participant2id: doc.data()['participant2id'],
+        email2: doc.data()['email2'],
         starttime: doc.data()['starttime'],
         endtime: doc.data()['endtime'],
         resume: doc.data()['resume'],

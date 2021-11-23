@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'database.dart';
 import 'screens/editmeeting.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -103,6 +105,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Montserrat'),
                             ),
+                            GestureDetector(
+                              onTap: () async {
+                                await sendMail(meetings[index].participant1id);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('Mail Sent'),
+                                ));
+                              },
+                              child: Text(
+                                'Participant 1 Email - ' +
+                                    meetings[index].email1,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Montserrat'),
+                              ),
+                            ),
                             Text(
                               'Participand 2 ID - ' +
                                   meetings[index].participant2id,
@@ -111,6 +131,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Montserrat'),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                await sendMail(meetings[index].participant2id);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('Mail Sent'),
+                                ));
+                              },
+                              child: Text(
+                                'Participant 2 Email - ' +
+                                    meetings[index].email2,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Montserrat'),
+                              ),
                             ),
                             Text(
                               'Start Time - ' + meetings[index].starttime,
@@ -202,4 +240,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ));
   }
+}
+
+Future<void> sendMail(participantid) async {
+  String username = 'studywithdummy@gmail.com';
+  String password = '9540892961';
+  String email = await DatabaseService().getmail(participantid);
+
+  final smtpServer = gmail(username, password);
+  final equivalentMessage = Message()
+    ..from = Address(username, 'Interview')
+    ..recipients.add(Address(email))
+    ..subject = 'Interview Scheduled'
+    ..text = 'Your Interview is Scheduled.';
+
+  await send(equivalentMessage, smtpServer);
 }
